@@ -34,6 +34,13 @@ export class FlashMiddleware implements NestMiddleware {
       return result;
     };
 
+    const originalRedirect = res.redirect;
+    res.redirect = (...args: unknown[]) => {
+      req.session.save(() => {
+        originalRedirect.apply(res, args);
+      });
+    };
+
     next();
   }
 }
